@@ -1,5 +1,5 @@
-# neurocInstall package version: 0.7
-pkg_ver = '# neurocInstall package version: 0.7'
+# oslerInstall package version: 0.1
+pkg_ver = '# oslerInstall package version: 0.1'
 source("https://bioconductor.org/biocLite.R")
 biocLite(suppressUpdates = TRUE,
          suppressAutoUpdate = TRUE,
@@ -43,9 +43,9 @@ if (length(dtools) == 0 ) {
 }
 message(paste("Using neurocLite version:", pkg_ver))
 
-	#' @title Neuroconductor Installer
-	#' @description Install function for neuroconductor packages
-	#' @param repo Package name in neuroconductor
+	#' @title OSLER Installer
+	#' @description Install function for OSLER packages
+	#' @param repo Package name in OSLER
 	#' @param release Stable or development version
 	#' @param upgrade_dependencies Should dependencies be updated?
 	#' passed to \code{\link[devtools]{install}}
@@ -56,7 +56,7 @@ message(paste("Using neurocLite version:", pkg_ver))
 	#' @importFrom devtools install_github
 	#' @importFrom utils read.csv
 	#' @importFrom utils compareVersion install.packages installed.packages
-	neuro_install = function(repo,
+	osler_install = function(repo,
 	                         release = c("stable", "current"),
 	                         upgrade_dependencies = FALSE,
 	                         ...){
@@ -68,17 +68,17 @@ message(paste("Using neurocLite version:", pkg_ver))
 	
 	  df = data.frame(repo = repo, stringsAsFactors = FALSE)
 	
-	  tab = neuro_package_table(long = TRUE)
+	  tab = osler_package_table(long = TRUE)
 	  ## import list of packages
 	  # error if pkg not in list of packages
 	  check_install = df$repo %in% tab$repo
 	  if (!all(check_install)) {
 	    bad_pkgs = df$repo[!check_install]
 	    bad_pkgs = paste(bad_pkgs, collapse = ", ")
-	    message(paste0("Available Packages on neuroconductor are ",
+	    message(paste0("Available Packages on OSLER are ",
 	            paste(unique(tab$repo), collapse = ", ")))
 	    stop(paste0("Package(s) ", bad_pkgs,
-	                " are not in neuroconductor"))
+	                " are not in OSLER"))
 	  }
 	  tab = merge(df, tab, by = "repo", all.x = TRUE)
 	  tab$version = numeric_version(tab$version)
@@ -94,7 +94,7 @@ message(paste("Using neurocLite version:", pkg_ver))
 	  })
 	  tab = do.call("rbind", tab)
 	  tab = data.frame(tab, stringsAsFactors = FALSE)
-	  tab$repo = paste0("neuroconductor/", tab$repo, "@", tab$commit_id)
+	  tab$repo = paste0("oslerinhealth/", tab$repo, "@", tab$commit_id)
 	
 	  if (!upgrade_dependencies) {
 	    res = try({
@@ -113,19 +113,12 @@ message(paste("Using neurocLite version:", pkg_ver))
 	  }
 	}
 	
-	#' @rdname neuro_install
-	#' @aliases neuroc_install
-	#' @aliases neuro_install
-	#' @export
-	neuroc_install = function(...) {
-	  neuro_install(...)
-	}
 	
-	#' @rdname neuro_install
-	#' @aliases neurocLite
+	#' @rdname osler_install
+	#' @aliases oslerLite
 	#' @export
-	neurocLite = function(...) {
-	  neuro_install(...)
+	oslerLite = function(...) {
+	  osler_install(...)
 	}
 	
 	#' @title Make Full Package Version
@@ -161,31 +154,26 @@ message(paste("Using neurocLite version:", pkg_ver))
 	
 	
 
-	#' @title Neuroconductor Package Table
-	#' @description Returns the table of Neuroconductor packages
+	#' @title OSLER Package Table
+	#' @description Returns the table of OSLER packages
 	#' @return \code{data.frame} of packages with commit IDs
 	#' @param path Path to the table of package
 	#' @param long Should the data be "long" (with respect to stable/current)
 	#' @export
 	#'
 	#' @note Package information is obtained from
-	#' \url{"https://neuroconductor.org/neurocPackages"}
+	#' \url{"https://oslerinhealth.org/oslerPackages"}
 	#'
 	#' @importFrom stats reshape
 	#' @examples
-	#' neuro_package_table()
-	neuro_package_table = function(
-	  path = "https://neuroconductor.org/neurocPackages",
+	#' osler_package_table()
+	osler_package_table = function(
+	  path = "https://oslerinhealth.org/oslerPackages",
 	  long = FALSE
 	) {
 	  #############################
-	  ## grab list of current neuroc packages
+	  ## grab list of current OSLER packages
 	  #############################
-	  # table_url = paste0("http://162.129.222.10/sites/default",
-	  # "/files/neuroc_packages.txt"
-	
-	  # table_url = paste0("http://neuroconductor.org/sites/default",
-	  #                    "/files/neuroc_packages.txt")
 	  args = list(file = path,
 	             stringsAsFactors = FALSE, header = TRUE,
 	             na.strings = "")
@@ -201,10 +189,10 @@ message(paste("Using neurocLite version:", pkg_ver))
 	
 	  colnames(tab) = c("repo",
 	                    "version.stable",
-	                    "neuroc_version.stable",
+	                    "osler_version.stable",
 	                    "commit_id.stable",
 	                    "version.current",
-	                    "neuroc_version.current",
+	                    "osler_version.current",
 	                    "commit_id.current")
 	
 	  tab$v = package_version(tab$version.stable)
@@ -231,17 +219,17 @@ message(paste("Using neurocLite version:", pkg_ver))
 	
 	
 	
-	#' @title Neuroconductor Packages
-	#' @description Returns the vector of Neuroconductor packages
-	#' @return \code{vector} of packages available on Neuroconductor
-	#' @param ... Arguments passed to \code{\link{neuro_package_table}}
+	#' @title OSLER Packages
+	#' @description Returns the vector of OSLER packages
+	#' @return \code{vector} of packages available on OSLER
+	#' @param ... Arguments passed to \code{\link{osler_package_table}}
 	#'
 	#' @export
 	#'
 	#' @examples
-	#' neuro_packages()
-	neuro_packages = function(...) {
-	  tab = neuro_package_table(...)
+	#' osler_packages()
+	osler_packages = function(...) {
+	  tab = osler_package_table(...)
 	  tab = tab$repo
 	  tab = unique(tab)
 	  return(tab)
