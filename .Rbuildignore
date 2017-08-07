@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+
+example_text\.csv$
+README\.md
+osler_top.R
+osler_bottom.R
+oslerLite.R
+make_oslerLite\.R
+makefile
+^\.travis\.yml$
